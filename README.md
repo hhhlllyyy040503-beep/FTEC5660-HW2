@@ -97,3 +97,35 @@ attack the MCP server. See the homework description for the full rules.
 
 ### Task 2
 > the attack techniques you used and why you expect them to work.
+
+## Homework 2 Solution
+
+### Task 1: CV Verification Agent
+
+I built a CV verification agent using LangChain and DeepSeek-V4-Flash, connected to the SocialGraph MCP server. The agent first reads each CV and searches LinkedIn to identify the correct candidate. It then compares the candidate's name, location, employment history, education, and skills with the retrieved profile. Facebook is used as an additional source when needed.
+
+The agent allows equivalent wording but treats incorrect job titles, employment dates, degrees, and skills as discrepancies. I also implemented error handling, retries, and a concurrency limit of three CVs to improve reliability. On the public test set, the agent correctly classified all seven CVs, achieving **7/7 accuracy (100%)**.
+
+### Task 2: Adversarial CV
+
+For Task 2, I designed a PDF visual-text inconsistency attack. The adversarial CV visibly presents Kelly Tsang's position at AIA as **Senior Manager**, while her actual LinkedIn profile lists **Manager**. This is a deliberate case of job title inflation.
+
+The attack exploits the difference between the visual appearance of a PDF and its machine-extracted text. Although a human reader sees "Senior Manager," the MarkItDown loader extracts "Manager," which matches the LinkedIn profile. The other key details, including employment dates, education, and skills, remain consistent with the target profile.
+
+I tested the adversarial CV against my Task 1 verification agent three times. **All three tests returned a reliability score of 0.95**, meaning the agent consistently classified the false CV as valid. This demonstrates how a text-only verification agent can overlook false claims when the PDF extraction process does not accurately reflect the document's visible content.
+
+### Task 3: Reflection on AI Paradoxes
+
+**The Verification Paradox: When Accurate AI Makes Incorrect Decisions**
+
+One paradox I noticed in this homework is that an AI agent can perform verification correctly but still reach the wrong conclusion.
+
+In Task 1, my agent achieved 100% accuracy on the public test set. However, in Task 2, I created a CV containing a false job title that the agent classified as valid. The problem was not necessarily that the AI failed to compare the information. Instead, the PDF extraction process gave the agent a different version of the document from what a human would see.
+
+This made me realize that the reliability of an AI system depends not only on the model itself, but also on how information is collected and processed before reaching the model. A powerful model cannot identify a false claim that it never receives.
+
+I also think this creates a risk of false confidence. When an AI system produces a clear reliability score, users may assume the entire verification process has been completed correctly. However, the score may only reflect the accuracy of the information that the system was able to extract.
+
+In real recruitment or KYC processes, this could be particularly concerning because decisions affect people's opportunities and access to financial services. I believe AI agents should not rely entirely on a single text extraction method. Comparing the extracted text with the visual document, identifying inconsistencies, and involving human review for uncertain cases could make verification more reliable.
+
+The main lesson I learned is that **an AI system can be logically correct based on its input while still being wrong about the real-world evidence.**
